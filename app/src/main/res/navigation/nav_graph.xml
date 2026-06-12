@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/popularRatesFragment">
+
+    <fragment
+        android:id="@+id/popularRatesFragment"
+        android:name="com.isakino.currencyrate.PopularRatesFragment"
+        android:label="fragment_popular_rates"
+        tools:layout="@layout/fragment_popular_rates" >
+        <action
+            android:id="@+id/action_popularRatesFragment_to_rateDetailsFragment"
+            app:destination="@id/rateDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteRatesFragment"
+        android:name="com.isakino.currencyrate.FavoriteRatesFragment"
+        android:label="fragment_favorite_rates"
+        tools:layout="@layout/fragment_favorite_rates" />
+    <fragment
+        android:id="@+id/rateDetailsFragment"
+        android:name="com.isakino.currencyrate.RateDetailsFragment"
+        android:label="fragment_rate_details"
+        tools:layout="@layout/fragment_rate_details" >
+        <action
+            android:id="@+id/action_rateDetailsFragment_to_rateHistoryFragment"
+            app:destination="@id/rateHistoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/rateHistoryFragment"
+        android:name="com.isakino.currencyrate.RateHistoryFragment"
+        android:label="fragment_rate_history"
+        tools:layout="@layout/fragment_rate_history" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.isakino.currencyrate.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
