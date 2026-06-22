@@ -15,6 +15,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Инициализируем базу данных Room, передавая контекст приложения
+        com.isakino.currencyrate.data.networ.NetworkModule.initializeDatabase(applicationContext)
+
         // Находим контейнер для наших фрагментов-экранов
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -23,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         // Находим нижнее меню переключения
         val bottomNavigation = findViewById<BottomNavigationView>( /* id = */ bottom_navigation)
 
-        // Связываем меню с навигацией — теперь экраны будут переключаться!
+        // Связываем меню с навигацией — они будут переключаться!
         NavigationUI.setupWithNavController(bottomNavigation, navController)
     }
 }
