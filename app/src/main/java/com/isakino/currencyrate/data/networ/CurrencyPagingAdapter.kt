@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.isakino.currencyrate.R
 
-class CurrencyPagingAdapter : PagingDataAdapter<CurrencyEntity, CurrencyPagingAdapter.PagingViewHolder>(CurrencyDiffCallback()) {
+// Поменяли CurrencyEntity на FavoriteCurrencyEntity по ТЗ
+class CurrencyPagingAdapter : PagingDataAdapter<FavoriteCurrencyEntity, CurrencyPagingAdapter.PagingViewHolder>(CurrencyDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagingViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_currency, parent, false)
@@ -28,19 +29,19 @@ class CurrencyPagingAdapter : PagingDataAdapter<CurrencyEntity, CurrencyPagingAd
         private val tvRate: TextView = itemView.findViewById(R.id.tvCurrencyRate)
         private val tvName: TextView = itemView.findViewById(R.id.tvCurrencyName)
 
-        fun bind(entity: CurrencyEntity) {
+        fun bind(entity: FavoriteCurrencyEntity) {
             tvCode.text = entity.code
             tvRate.text = String.format("%.4f", entity.rate)
-            tvName.text = if (entity.isInFavorites) "Избранная" else "Валюта"
+            tvName.text = "Избранная валюта" // Раз она в этой таблице, она точно в избранном
         }
     }
 
-    class CurrencyDiffCallback : DiffUtil.ItemCallback<CurrencyEntity>() {
-        override fun areItemsTheSame(oldItem: CurrencyEntity, newItem: CurrencyEntity): Boolean {
+    class CurrencyDiffCallback : DiffUtil.ItemCallback<FavoriteCurrencyEntity>() {
+        override fun areItemsTheSame(oldItem: FavoriteCurrencyEntity, newItem: FavoriteCurrencyEntity): Boolean {
             return oldItem.code == newItem.code
         }
 
-        override fun areContentsTheSame(oldItem: CurrencyEntity, newItem: CurrencyEntity): Boolean {
+        override fun areContentsTheSame(oldItem: FavoriteCurrencyEntity, newItem: FavoriteCurrencyEntity): Boolean {
             return oldItem == newItem
         }
     }

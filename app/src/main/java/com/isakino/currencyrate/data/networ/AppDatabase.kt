@@ -5,18 +5,26 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// Указываем, какие таблицы будут в нашей БД, и задаем версию
-@Database(entities = [CurrencyEntity::class], version = 1, exportSchema = false)
+// В массив entities добавлены все три наши таблицы: Кэш, Избранное и История
+@Database(
+    entities = [
+        CurrencyEntity::class,
+        FavoriteCurrencyEntity::class,
+        HistoryCurrencyEntity::class
+    ],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
-    // Функция, которая будет отдавать нам интерфейс с SQL-запросами
+    // Функция, которая отдает интерфейс со всеми SQL-запросами
     abstract fun currencyDao(): CurrencyDao
 
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Метод для создания или получения уже существующей базы данных (Синглтон)
+        // Метод для создания или получения синглтона базы данных
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
