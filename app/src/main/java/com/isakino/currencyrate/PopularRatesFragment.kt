@@ -1,51 +1,78 @@
 package com.isakino.currencyrate
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.isakino.currencyrate.data.networ.CurrencyRepository
 import com.isakino.currencyrate.data.networ.CurrencyAdapter
+import com.isakino.currencyrate.data.networ.CurrencyNames
+import com.isakino.currencyrate.data.networ.CurrencyRepository
 import com.isakino.currencyrate.data.networ.NetworkModule
 import kotlinx.coroutines.launch
 
 class PopularRatesFragment : Fragment() {
 
-    // Создаем два адаптера под две подборки валют из ТЗ ментора
     private val horizontalAdapter = CurrencyAdapter()
     private val verticalAdapter = CurrencyAdapter()
 
-    // Храним исходный список всех курсов из сети для фильтрации в поиске
     private var allRatesMap: Map<String, Double> = emptyMap()
+    private var allCurrenciesMap: Map<String, Double> = emptyMap()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Подключаем ваш файл разметки фрагмента
+    ): View {
         return inflater.inflate(R.layout.fragment_popular_rates, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Привязываем списки RecyclerView из XML к коду
+        Log.d("API_TEST", "PopularRatesFragment запустился")
+
         val rvHorizontal = view.findViewById<RecyclerView>(R.id.rvHorizontal)
         val rvVertical = view.findViewById<RecyclerView>(R.id.rvVertical)
+        val searchView = view.findViewById<SearchView>(R.id.searchView)
 
         rvHorizontal.adapter = horizontalAdapter
         rvVertical.adapter = verticalAdapter
 
-        // 2. Привязываем поисковое поле SearchView из XML к коду
-        val searchView = view.findViewById<SearchView>(R.id.searchView)
+        horizontalAdapter.onItemClick = { code, rate ->
+            val bundle = Bundle().apply {
+                putString("currency_code", code)
+                putDouble("currency_rate", rate)
+            }
 
-        // 3. Настраиваем логику работы поиска валют в реальном времени
+            findNavController().navigate(
+                R.id.rateDetailsFragment,
+                bundle
+            )
+        }
+
+        verticalAdapter.onItemClick = { code, rate ->
+            val bundle = Bundle().apply {
+                putString("currency_code", code)
+                putDouble("currency_rate", rate)
+            }
+
+            findNavController().navigate(
+                R.id.rateDetailsFragment,
+                bundle
+            )
+        }
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 filterVerticalList(newText.orEmpty())
@@ -53,36 +80,64 @@ class PopularRatesFragment : Fragment() {
             }
         })
 
-        // 4. Запускаем корутину и скачиваем актуальные данные из интернета
-        val repository = CurrencyRepository(NetworkModule.apiService, NetworkModule.currencyDao)
+        val repository = CurrencyRepository(
+            NetworkModule.apiService,
+            NetworkModule.currencyDao
+        )
+
         viewLifecycleOwner.lifecycleScope.launch {
+
             try {
+
                 val response = repository.fetchLatestRates("USD")
+
+                Log.d("API_TEST", "HTTP = ${response.code()}")
+                Log.d("API_TEST", "OK = ${response.isSuccessful}")
+
                 if (response.isSuccessful) {
+
                     val rates = response.body()?.rates ?: emptyMap()
 
-                    // Горизонтальная подборка: берем основные топ-валюты
+                    allCurrenciesMap = rates
+
+                    repository.saveRatesToDatabase(rates)
+
+
                     val topCodes = setOf("USD", "EUR", "RUB", "CNY")
-                    val horizontalRates = rates.filter { it.key in topCodes }
+
+                    val horizontalRates = rates.filter {
+                        it.key in topCodes
+                    }
+
                     horizontalAdapter.submitRates(horizontalRates)
 
-                    // Вертикальная подборка: все остальные валюты
-                    allRatesMap = rates.filter { it.key !in topCodes }
+                    allRatesMap = rates.filter {
+                        it.key !in topCodes
+                    }
+
                     verticalAdapter.submitRates(allRatesMap)
                 }
+
             } catch (e: Exception) {
-                // Ошибки сети перехватываются здесь
+                Log.e("API_TEST", "Ошибка сети", e)
             }
         }
     }
 
-    // Метод для фильтрации основного вертикального списка по коду валюты
     private fun filterVerticalList(query: String) {
-        if (query.isEmpty()) {
+
+        if (query.isBlank()) {
             verticalAdapter.submitRates(allRatesMap)
-        } else {
-            val filtered = allRatesMap.filter { it.key.contains(query, ignoreCase = true) }
-            verticalAdapter.submitRates(filtered)
+            return
         }
+
+        val filtered = allCurrenciesMap.filter { (code, _) ->
+
+            code.contains(query, ignoreCase = true) ||
+                    CurrencyNames.getName(code)
+                        .contains(query, ignoreCase = true)
+        }
+
+        verticalAdapter.submitRates(filtered)
     }
 }

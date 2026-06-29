@@ -11,8 +11,11 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
 
     private var ratesList: List<Pair<String, Double>> = emptyList()
 
-    // Слушатель кликов, который мы будем настраивать во фрагменте
+    // Обычный клик
     var onItemClick: ((String, Double) -> Unit)? = null
+
+    // Долгое нажатие
+    var onItemLongClick: ((String, Double) -> Unit)? = null
 
     fun submitRates(newRates: Map<String, Double>) {
         ratesList = newRates.toList()
@@ -20,7 +23,8 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_currency, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_currency, parent, false)
         return CurrencyViewHolder(view)
     }
 
@@ -32,18 +36,28 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
     override fun getItemCount(): Int = ratesList.size
 
     inner class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         private val tvCode: TextView = itemView.findViewById(R.id.tvCurrencyCode)
         private val tvRate: TextView = itemView.findViewById(R.id.tvCurrencyRate)
         private val tvName: TextView = itemView.findViewById(R.id.tvCurrencyName)
 
         fun bind(code: String, rate: Double) {
+
             tvCode.text = code
             tvRate.text = String.format("%.4f", rate)
-            tvName.text = "Валюта"
 
-            // Обрабатываем клик на всю карточку
+            // Название валюты
+            tvName.text = CurrencyNames.getName(code)
+
+            // Обычный клик
             itemView.setOnClickListener {
                 onItemClick?.invoke(code, rate)
+            }
+
+            // Долгое нажатие
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(code, rate)
+                true
             }
         }
     }

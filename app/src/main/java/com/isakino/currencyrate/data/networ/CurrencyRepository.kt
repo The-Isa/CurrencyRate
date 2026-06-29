@@ -12,15 +12,13 @@ class CurrencyRepository(
 ) {
 
     // ========================================================================
-    // 1. СЕТЕВОЙ СЛОЙ И КЭШ
+    // 1. СЕТЬ И КЭШ
     // ========================================================================
 
-    // Запрос в сеть за свежими курсами
     suspend fun fetchLatestRates(baseCurrency: String): Response<CurrencyResponseDTO> {
         return apiService.getLatestRates(baseCurrency)
     }
 
-    // Сохранение скачанных из сети валют в кэш
     suspend fun saveRatesToDatabase(ratesMap: Map<String, Double>) {
         val entities = ratesMap.map { (code, rate) ->
             CurrencyEntity(code = code, rate = rate)
@@ -32,24 +30,26 @@ class CurrencyRepository(
     // 2. ИЗБРАННОЕ
     // ========================================================================
 
-    // Добавление валюты в избранное
     suspend fun addToFavorites(code: String, rate: Double) {
-        val favoriteItem = FavoriteCurrencyEntity(code = code, rate = rate)
-        currencyDao.insertFavorite(favoriteItem)
+        currencyDao.insertFavorite(
+            FavoriteCurrencyEntity(code, rate)
+        )
     }
 
-    // Удаление валюты из избранного
     suspend fun removeFromFavorites(code: String, rate: Double) {
-        val favoriteItem = FavoriteCurrencyEntity(code = code, rate = rate)
-        currencyDao.deleteFavorite(favoriteItem)
+        currencyDao.deleteFavorite(
+            FavoriteCurrencyEntity(code, rate)
+        )
     }
 
-    // Проверка: находится ли валюта в избранном прямо сейчас
     suspend fun isCurrencyFavorite(code: String): Boolean {
         return currencyDao.isFavorite(code)
     }
 
-    // Поток пагинации для таблицы избранного
+    suspend fun getFavoriteCurrencies(): List<FavoriteCurrencyEntity> {
+        return currencyDao.getFavoriteCurrencies()
+    }
+
     fun getPagedFavoriteCurrencies(): Flow<PagingData<FavoriteCurrencyEntity>> {
         return Pager(
             config = PagingConfig(
@@ -61,21 +61,48 @@ class CurrencyRepository(
     }
 
     // ========================================================================
-    // 3. НОВЫЙ РАЗДЕЛ: ИСТОРИЯ ПРОСМОТРОВ (НЕ ДАВНО ПРОСМОТРЕННЫЕ)
+    // 3. ИСТОРИЯ
     // ========================================================================
 
-    // Метод для добавления валюты в историю при клике на неё
     suspend fun addToHistory(code: String, rate: Double) {
-        val historyItem = HistoryCurrencyEntity(
-            code = code,
-            rate = rate,
-            timestamp = System.currentTimeMillis() // Фиксируем точное время клика
+
+        currencyDao.insertHistoryItem(
+            HistoryCurrencyEntity(
+                code = code,
+                rate = rate,
+                timestamp = System.currentTimeMillis()
+            )
         )
-        currencyDao.insertHistoryItem(historyItem)
     }
 
-    // Метод для получения списка недавних просмотров
     suspend fun getHistoryList(): List<HistoryCurrencyEntity> {
         return currencyDao.getHistoryCurrencies()
+    }
+
+    // ========================================================================
+    // 4. УВЕДОМЛЕНИЯ
+    // ========================================================================
+
+    suspend fun addNotification(
+        currencyCode: String,
+        message: String,
+        triggerTime: Long
+    ) {
+
+        currencyDao.insertNotification(
+            NotificationEntity(
+                currencyCode = currencyCode,
+                message = message,
+                triggerTime = triggerTime
+            )
+        )
+    }
+
+    suspend fun removeNotification(notification: NotificationEntity) {
+        currencyDao.deleteNotification(notification)
+    }
+
+    suspend fun getNotifications(): List<NotificationEntity> {
+        return currencyDao.getNotifications()
     }
 }

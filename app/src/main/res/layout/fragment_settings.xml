@@ -1,14 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SettingsFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Настройки"
+            android:textStyle="bold"
+            android:textSize="24sp" />
+
+        <!-- ========================= -->
+        <!-- ТЕМА -->
+        <!-- ========================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Тема приложения"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rbSystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Системная" />
+
+            <RadioButton
+                android:id="@+id/rbLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Светлая" />
+
+            <RadioButton
+                android:id="@+id/rbDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Темная" />
+
+        </RadioGroup>
+
+        <!-- ========================= -->
+        <!-- СТАРТОВЫЙ ЭКРАН -->
+        <!-- ========================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Стартовый экран"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupStartScreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rbHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Главная" />
+
+            <RadioButton
+                android:id="@+id/rbFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Избранное" />
+
+            <RadioButton
+                android:id="@+id/rbHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="История" />
+
+            <RadioButton
+                android:id="@+id/rbNotifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Напоминания" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+</ScrollView>
