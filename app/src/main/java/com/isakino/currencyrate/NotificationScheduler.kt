@@ -4,14 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 
 class NotificationScheduler(
     private val context: Context
 ) {
 
-    /**
-     * Планирование уведомления на конкретную дату и время
-     */
     fun scheduleNotification(
         id: Int,
         title: String,
@@ -36,17 +34,24 @@ class NotificationScheduler(
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        // Планируем уведомление
-        alarmManager.set(
-            AlarmManager.RTC_WAKEUP,
-            triggerTime,
-            pendingIntent
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            alarmManager.setAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerTime,
+                pendingIntent
+            )
+
+        } else {
+
+            alarmManager.set(
+                AlarmManager.RTC_WAKEUP,
+                triggerTime,
+                pendingIntent
+            )
+        }
     }
 
-    /**
-     * Отмена запланированного уведомления
-     */
     fun cancelNotification(id: Int) {
 
         val intent = Intent(context, NotificationReceiver::class.java).apply {

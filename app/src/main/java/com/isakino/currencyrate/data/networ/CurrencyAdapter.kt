@@ -3,6 +3,7 @@ package com.isakino.currencyrate.data.networ
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,6 +17,8 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
     var onItemClick: ((String, Double) -> Unit)? = null
     var onItemLongClick: ((String, Double) -> Unit)? = null
 
+    private var lastPosition = -1
+
     fun submitRates(newRates: Map<String, Double>) {
         ratesList = newRates.toList()
         notifyDataSetChanged()
@@ -28,11 +31,30 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
+
         val (code, rate) = ratesList[position]
+
         holder.bind(code, rate)
+
+        setAnimation(holder.itemView, position)
     }
 
     override fun getItemCount(): Int = ratesList.size
+
+    private fun setAnimation(view: View, position: Int) {
+
+        if (position > lastPosition) {
+
+            val animation = AnimationUtils.loadAnimation(
+                view.context,
+                R.anim.item_animation
+            )
+
+            view.startAnimation(animation)
+
+            lastPosition = position
+        }
+    }
 
     inner class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

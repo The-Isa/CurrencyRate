@@ -2,6 +2,8 @@ package com.isakino.currencyrate
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -16,21 +18,22 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 100
+        private const val CHANNEL_ID = "currency_channel"
     }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        // Применяем тему
         SettingsManager(this).applyTheme()
 
         super.onCreate(savedInstanceState)
 
-        // Инициализация Room
         com.isakino.currencyrate.data.networ.NetworkModule
             .initializeDatabase(applicationContext)
 
         setContentView(R.layout.activity_main)
+
+        createNotificationChannel()
 
         requestNotificationPermission()
 
@@ -48,27 +51,41 @@ class MainActivity : AppCompatActivity() {
             navController
         )
 
-        // Открываем выбранный стартовый экран
         if (savedInstanceState == null) {
 
             when (SettingsManager(this).getStartScreen()) {
 
-                SettingsManager.SCREEN_HOME -> {
+                SettingsManager.SCREEN_HOME ->
                     navController.navigate(R.id.popularRatesFragment)
-                }
 
-                SettingsManager.SCREEN_FAVORITES -> {
+                SettingsManager.SCREEN_FAVORITES ->
                     navController.navigate(R.id.favoriteRatesFragment)
-                }
 
-                SettingsManager.SCREEN_HISTORY -> {
+                SettingsManager.SCREEN_HISTORY ->
                     navController.navigate(R.id.rateHistoryFragment)
-                }
 
-                SettingsManager.SCREEN_NOTIFICATIONS -> {
+                SettingsManager.SCREEN_NOTIFICATIONS ->
                     navController.navigate(R.id.notificationFragment)
-                }
             }
+        }
+    }
+
+    private fun createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Курсы валют",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            channel.description = "Уведомления о курсах валют"
+
+            val manager =
+                getSystemService(NotificationManager::class.java)
+
+            manager.createNotificationChannel(channel)
         }
     }
 
