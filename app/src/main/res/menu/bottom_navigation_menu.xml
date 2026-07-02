@@ -5,21 +5,26 @@
     <item
         android:id="@+id/popularRatesFragment"
         android:icon="@android:drawable/ic_menu_view"
-        android:title="Главная"/>
+        android:title="Главная" />
 
     <item
         android:id="@+id/favoriteRatesFragment"
         android:icon="@android:drawable/btn_star_big_on"
-        android:title="Избранное"/>
+        android:title="Избранное" />
+
+    <item
+        android:id="@+id/rateHistoryFragment"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="История" />
 
     <item
         android:id="@+id/notificationFragment"
         android:icon="@android:drawable/ic_dialog_info"
-        android:title="Напоминания"/>
+        android:title="Напоминания" />
 
     <item
         android:id="@+id/settingsFragment"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:title="Настройки"/>
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Настройки" />
 
 </menu>

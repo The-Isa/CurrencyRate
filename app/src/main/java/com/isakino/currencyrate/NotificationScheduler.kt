@@ -36,7 +36,7 @@ class NotificationScheduler(
         val alarmManager =
             context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        // Планируем уведомление на выбранную дату и время
+        // Планируем уведомление
         alarmManager.set(
             AlarmManager.RTC_WAKEUP,
             triggerTime,

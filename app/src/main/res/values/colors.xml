@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Основные цвета -->
+    <color name="primary">#2563EB</color>
+    <color name="onPrimary">#FFFFFF</color>
+
+    <color name="secondary">#22C55E</color>
+    <color name="onSecondary">#FFFFFF</color>
+
+    <!-- Фон -->
+    <color name="background">#F8FAFC</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- Дополнительные -->
+    <color name="error">#EF4444</color>
+    <color name="success">#16A34A</color>
+
+    <!-- ========================= -->
+    <!-- Цвета для нового дизайна -->
+    <!-- ========================= -->
+
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+
+    <color name="search_background">#FFFFFF</color>
+    <color name="search_stroke">#E5E7EB</color>
+
+    <color name="card_background">#FFFFFF</color>
+
+    <color name="rate_green">#16A34A</color>
+
 </resources>

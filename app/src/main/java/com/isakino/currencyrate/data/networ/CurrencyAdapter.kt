@@ -5,16 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.isakino.currencyrate.R
+import de.hdodenhof.circleimageview.CircleImageView
 
 class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
     private var ratesList: List<Pair<String, Double>> = emptyList()
 
-    // Обычный клик
     var onItemClick: ((String, Double) -> Unit)? = null
-
-    // Долгое нажатие
     var onItemLongClick: ((String, Double) -> Unit)? = null
 
     fun submitRates(newRates: Map<String, Double>) {
@@ -37,24 +36,44 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>
 
     inner class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val tvCode: TextView = itemView.findViewById(R.id.tvCurrencyCode)
-        private val tvRate: TextView = itemView.findViewById(R.id.tvCurrencyRate)
-        private val tvName: TextView = itemView.findViewById(R.id.tvCurrencyName)
+        private val ivFlag: CircleImageView =
+            itemView.findViewById(R.id.ivFlag)
+
+        private val tvCode: TextView =
+            itemView.findViewById(R.id.tvCurrencyCode)
+
+        private val tvRate: TextView =
+            itemView.findViewById(R.id.tvCurrencyRate)
+
+        private val tvName: TextView =
+            itemView.findViewById(R.id.tvCurrencyName)
 
         fun bind(code: String, rate: Double) {
 
             tvCode.text = code
             tvRate.text = String.format("%.4f", rate)
-
-            // Название валюты
             tvName.text = CurrencyNames.getName(code)
 
-            // Обычный клик
+            val countryCode = CurrencyFlags.get(code)
+
+            if (countryCode != null) {
+
+                Glide.with(itemView.context)
+                    .load("https://flagcdn.com/w80/$countryCode.png")
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(ivFlag)
+
+            } else {
+
+                ivFlag.setImageResource(R.drawable.ic_launcher_foreground)
+
+            }
+
             itemView.setOnClickListener {
                 onItemClick?.invoke(code, rate)
             }
 
-            // Долгое нажатие
             itemView.setOnLongClickListener {
                 onItemLongClick?.invoke(code, rate)
                 true

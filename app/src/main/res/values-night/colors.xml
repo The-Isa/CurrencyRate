@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Основные цвета -->
+    <color name="primary">#60A5FA</color>
+    <color name="onPrimary">#000000</color>
+
+    <color name="secondary">#4ADE80</color>
+    <color name="onSecondary">#000000</color>
+
+    <!-- Фон -->
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+
+    <!-- Дополнительные -->
+    <color name="error">#F87171</color>
+    <color name="success">#4ADE80</color>
+
+    <!-- Цвета для нового дизайна -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+
+    <color name="search_background">#2C2C2C</color>
+    <color name="search_stroke">#3C3C3C</color>
+
+    <color name="card_background">#252525</color>
+
+    <color name="rate_green">#4ADE80</color>
+
+</resources>
